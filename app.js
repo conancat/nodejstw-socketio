@@ -10,8 +10,7 @@ var express = require('express')
 
 var app = module.exports = express.createServer();
 
-
-// Stylus compile
+// Stylus compile function
 var compile = function (str, path) {
   return stylus(str)
     .set('filename', path)
@@ -27,11 +26,14 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
+  
+  // Insert Stylus middleware before creating static with Express
   app.use(stylus.middleware({
     src: __dirname + '/src/public'
     , dest: __dirname + '/public'
     , compile: compile
   }));
+  
   app.use(express.static(__dirname + '/public'));
 });
 
@@ -48,6 +50,10 @@ app.configure('production', function(){
 app.get('/', routes.index);
 
 app.listen(3000, function(){
+  
+  // Start SocketIO after app is initialized
   app.sockets = require('./socket')(app);
+  
+  
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });

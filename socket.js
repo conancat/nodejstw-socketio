@@ -1,6 +1,6 @@
 module.exports = function(app) {
   var io = require('socket.io').listen(app);
-  
+    
   io.configure(function(){
     io.set('log level', 2)
   });
@@ -17,6 +17,7 @@ module.exports = function(app) {
           , time: new Date()
         };
         
+        // Emit system message that user joins the chat
         io.sockets.emit('system', data);
       });
     });
@@ -31,21 +32,28 @@ module.exports = function(app) {
           , time: new Date()
         };
         
+        // Emit system message that user leaves the chat
         io.sockets.emit('system', data);
-      })      
+      })
+      
     });
     
+    // When user gets message
     socket.on('msg', function(msg){
       
-      if (msg.length < 1) return false;      
+      // Add in check if message isn't empty
+      if (msg && msg.length < 1) return false;      
       
+      // Get username first
       socket.get('username', function(err, username) {
+        
         var data = {
           username: username
           , time: new Date()
           , msg: msg
         }
         
+        // Broadcast the data
         socket.broadcast.emit('msg', data);
         
       });
