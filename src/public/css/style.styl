@@ -1,0 +1,106 @@
+@import 'nib'
+
+// Some settings
+$font-size = 14px
+$line-height = 1.5
+
+// Some sugar functions
+gap(multiplier)
+  return $font-size * $line-height * multiplier
+
+// Width
+w(val)
+  width val
+
+// Padding 
+p()
+  padding arguments
+
+// Margin
+m()
+  margin arguments
+  
+c()
+  color arguments
+
+// Colors
+$time = #aaa
+$user-name = #195073
+$system-msg = #7F8C1F
+$chat-input-border = #eee
+$button-color = #195073
+$white = #fff
+
+
+// Actual code
+body
+  padding 50px
+  font $font-size/$line-height "Lucida Grande", Helvetica, Arial, sans-serif
+
+a
+  c #195073
+  
+h1
+  text-align center
+  font-size 2em
+  
+.chat
+  width 80%
+  margin 0 auto
+  border 1px solid #eee
+
+.chat-bd
+  height 400px
+  overflow-y auto
+
+.chat-msgs
+  p gap(1)
+      
+.chat-msg-time
+  c $time
+  margin-right gap(0.4)
+
+.chat-msg-user
+  font-weight bold
+  margin-right gap(0.4)
+  c $user-name
+
+.chat-system-msg 
+  c $system-msg
+
+.chat-ft
+  padding gap(0.5)
+
+.chat-form 
+  overflow hidden
+  
+.chat-input-wrapper
+  overflow hidden
+  p gap(0.5)
+  border 1px solid $chat-input-border
+  
+.chat-input
+  font-size 21px
+  width 100%
+  margin 0 
+  padding 0
+  border none
+  
+  &:focus
+    outline none
+    box-shadow 0
+  
+.chat-submit
+  font-size 21px
+  float right
+  margin-left gap(0.5)
+  p gap(0.5)
+  background linear-gradient(top, lighten($button-color, 10), darken($button-color, 10))
+  border none
+  c $white
+  
+  &:hover
+    background linear-gradient(top, lighten($button-color, 20), $button-color)
+    
+  &:active
+    background linear-gradient(top, $button-color, lighten($button-color, 20))
