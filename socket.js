@@ -49,6 +49,8 @@ module.exports = function(app) {
     socket.on('disconnect', function(){
       socket.get('username', function(err, username) {
         
+        if (!username) return false;
+        
         var data = {
           msg: username + " leaves the chat."
           , username: 'Skynet'
