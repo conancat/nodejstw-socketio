@@ -8,6 +8,9 @@ module.exports = function(app) {
   // Messages buffer
   var buffer = [];
   
+  // Users counter
+  var usersCount = 0;
+  
   var pushBuffer = function(data) {
     buffer.push(data);
     
@@ -35,11 +38,15 @@ module.exports = function(app) {
             var msg = username + " joins the chat.";
           }
           
+          // Increase users count
+          usersCount++
+          
           var data = {
             msg: msg
             , username: 'Skynet'
             , time: new Date()
             , system: true
+            , onlineUsers: usersCount
           };
 
           // Emit system message that user joins the chat
@@ -65,6 +72,9 @@ module.exports = function(app) {
     socket.on('disconnect', function(){
       socket.get('username', function(err, username) {
         
+        // Decrease users count
+        usersCount--;
+        
         if (!username) return false;
         
         var data = {
@@ -72,6 +82,7 @@ module.exports = function(app) {
           , username: 'Skynet'
           , time: new Date()
           , system: true
+          , onlineUsers: usersCount
         };
         
         // Emit system message that user leaves the chat

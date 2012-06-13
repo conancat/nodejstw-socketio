@@ -88,6 +88,9 @@
     html.addClass('chat-system-msg');
     app.$msgs.append(html);
     app.scrolltoBtm();
+    
+    app.updateUsersCount(data);
+    
     return this;
   }
   
@@ -150,6 +153,10 @@
     height = app.$msgs.height();
     app.$body.scrollTop(height);
     return this;
+  }
+  
+  App.prototype.updateUsersCount = function(data) {
+    $('.online-users').text('Online users: ' + data.onlineUsers);
   }
   
   // Document ready
