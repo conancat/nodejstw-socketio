@@ -5,6 +5,18 @@ module.exports = function(app) {
     io.set('log level', 2)
   });
   
+  // Messages buffer
+  var buffer = [];
+  
+  var pushBuffer = function(data) {
+    buffer.push(data);
+    
+    if (buffer.length > 50) {
+      buffer.unshift();
+    }
+    
+  }
+  
   
   io.sockets.on('connection', function(socket){
     
@@ -15,10 +27,21 @@ module.exports = function(app) {
           msg: username + " joins the chat."
           , username: 'Skynet'
           , time: new Date()
+          , system: true
         };
         
         // Emit system message that user joins the chat
-        io.sockets.emit('system', data);
+        socket.broadcast.emit('system', data);
+        
+        pushBuffer(data);
+        
+        // Emit messages in buffer
+        for (i in buffer) {
+          
+          if (buffer[i].system) socket.emit('system', buffer[i]);
+          else socket.emit('msg', buffer[i]);
+        }
+        
       });
     });
     
@@ -30,10 +53,14 @@ module.exports = function(app) {
           msg: username + " leaves the chat."
           , username: 'Skynet'
           , time: new Date()
+          , system: true
         };
         
         // Emit system message that user leaves the chat
-        io.sockets.emit('system', data);
+        socket.broadcast.emit('system', data);
+        
+        pushBuffer(data);
+        
       })
       
     });
@@ -55,6 +82,8 @@ module.exports = function(app) {
         
         // Broadcast the data
         socket.broadcast.emit('msg', data);
+        
+        pushBuffer(data);
         
       });
       
