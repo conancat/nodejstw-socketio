@@ -1,6 +1,7 @@
 body{padding:50px;font:14px/1.5 "Lucida Grande",Helvetica,Arial,sans-serif}
 a{color:#195073}
 h1{text-align:center;font-size:2em}
+.change-username{display:block;text-align:right;width:80%;margin:0 auto 10.5px}
 .chat{width:80%;margin:0 auto;border:1px solid #eee}
 .chat-bd{height:400px;overflow-y:auto}
 .chat-msgs{padding:21px}

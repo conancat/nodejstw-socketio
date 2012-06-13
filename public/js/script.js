@@ -1,6 +1,18 @@
 (function(){
   var app = {};
   
+
+  // Helper function for getting cookies
+  var getCookie = function(attr) {
+    var cookieArr = document.cookie.split(/\=|;\s/g);
+    
+    if (cookieArr.indexOf(attr) !== -1) {
+      return cookieArr[cookieArr.indexOf(attr)+1];
+    } else {
+      return "";
+    }
+  }
+  
   // Create app object
   var App = function(){
     this.$body = $('.chat-bd');
@@ -20,8 +32,14 @@
   }
   
   // Get username from user with a prompt. If username clicks cancel, ask get again!
-  App.prototype.getUsername = function(locals) {
-    var name = prompt('What is your name?')
+  App.prototype.getUsername = function(forced) {
+    
+    // Try getting username from cookie
+    if (getCookie('username').length > 1 && !forced) {
+      var name = getCookie('username');
+    } else {
+      var name = prompt('What is your name?');
+    }
     
     if (name != null && name != "" ) {
       // Emit username join event
@@ -29,6 +47,8 @@
       
       // Set username on app
       this.username = name;
+      
+      document.cookie = "username=" + name;
       
     } else {
       this.getUsername();
@@ -82,6 +102,16 @@
   // Bind view events
   App.prototype.bindViewEvents = function() {
     this.$form.on('submit', this.submit);
+    
+    var self = this;
+    
+    $('.change-username').on('click', function(e){
+      e.preventDefault();
+      
+      self.getUsername(true);
+      
+    });
+    
     return this;
   }
   

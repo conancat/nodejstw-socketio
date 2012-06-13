@@ -22,25 +22,41 @@ module.exports = function(app) {
     
     // When user joins
     socket.on('join', function(username){
-      socket.set('username', username, function() {
-        var data = {
-          msg: username + " joins the chat."
-          , username: 'Skynet'
-          , time: new Date()
-          , system: true
-        };
+      
+      // Try to get old username
+      socket.get('username', function(err, oldUsername){
         
-        // Emit system message that user joins the chat
-        socket.broadcast.emit('system', data);
-        
-        pushBuffer(data);
-        
-        // Emit messages in buffer
-        for (i in buffer) {
+        // Set new username
+        socket.set('username', username, function() {
           
-          if (buffer[i].system) socket.emit('system', buffer[i]);
-          else socket.emit('msg', buffer[i]);
-        }
+          if (oldUsername && oldUsername.length > 0) {
+            var msg = oldUsername + " has just renamed to " + username;
+          } else {
+            var msg = username + " joins the chat.";
+          }
+          
+          var data = {
+            msg: msg
+            , username: 'Skynet'
+            , time: new Date()
+            , system: true
+          };
+
+          // Emit system message that user joins the chat
+          io.sockets.emit('system', data);
+          
+          pushBuffer(data);
+
+          // If there is no old userName then is new user
+          if (!oldUsername) {
+            // Emit messages in buffer
+            for (i in buffer) {
+              if (buffer[i].system) socket.emit('system', buffer[i]);
+              else socket.emit('msg', buffer[i]);
+            }
+          }
+        });
+        
         
       });
     });
