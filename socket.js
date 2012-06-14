@@ -17,7 +17,18 @@ module.exports = function(app) {
     if (buffer.length > 50) {
       buffer.unshift();
     }
+  }
+  
+  var incUserCount = function() {
+    usersCount++;
+  }
+  
+  var decUserCount = function() {
+    usersCount--;
     
+    if (usersCount < 0) {
+      usersCount = 0;
+    }
   }
   
   
@@ -39,7 +50,7 @@ module.exports = function(app) {
           }
           
           // Increase users count
-          usersCount++
+          incUserCount();
           
           var data = {
             msg: msg
@@ -73,7 +84,7 @@ module.exports = function(app) {
       socket.get('username', function(err, username) {
         
         // Decrease users count
-        usersCount--;
+        decUserCount();
         
         if (!username) return false;
         
