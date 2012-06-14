@@ -8,9 +8,6 @@ module.exports = function(app) {
   // Messages buffer
   var buffer = [];
   
-  // Users counter
-  var usersCount = 0;
-  
   var pushBuffer = function(data) {
     buffer.push(data);
     
@@ -19,16 +16,21 @@ module.exports = function(app) {
     }
   }
   
-  var incUserCount = function() {
-    usersCount++;
-  }
-  
-  var decUserCount = function() {
-    usersCount--;
+  // Count how many sockets are connected
+  var getUsersCount = function(data) {
     
-    if (usersCount < 0) {
-      usersCount = 0;
+    var sockets = io.sockets.sockets;
+    
+    var usersCount = 0;
+    
+    for (var key in sockets) {
+      if (sockets.hasOwnProperty(key)) {
+        usersCount++;
+      }
     }
+    
+    return usersCount;
+    
   }
   
   
@@ -49,15 +51,12 @@ module.exports = function(app) {
             var msg = username + " joins the chat.";
           }
           
-          // Increase users count
-          incUserCount();
-          
           var data = {
             msg: msg
             , username: 'Skynet'
             , time: new Date()
             , system: true
-            , onlineUsers: usersCount
+            , onlineUsers: getUsersCount()
           };
 
           // Emit system message that user joins the chat
@@ -73,6 +72,7 @@ module.exports = function(app) {
               else socket.emit('msg', buffer[i]);
             }
           }
+        
         });
         
         
@@ -83,9 +83,6 @@ module.exports = function(app) {
     socket.on('disconnect', function(){
       socket.get('username', function(err, username) {
         
-        // Decrease users count
-        decUserCount();
-        
         if (!username) return false;
         
         var data = {
@@ -93,7 +90,7 @@ module.exports = function(app) {
           , username: 'Skynet'
           , time: new Date()
           , system: true
-          , onlineUsers: usersCount
+          , onlineUsers: getUsersCount() - 1
         };
         
         // Emit system message that user leaves the chat
